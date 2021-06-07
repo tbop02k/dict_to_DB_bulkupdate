@@ -114,4 +114,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+test.ipynb
+
+# 계정정보 처리
 x_x/
