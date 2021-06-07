@@ -1,3 +1,7 @@
+import pandas as pd
+from x_x import account_info as ai
+from pyjin import pyjin
+
 def bulk_join_update(acc,
                      db,
                      table,
