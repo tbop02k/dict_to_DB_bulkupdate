@@ -1,5 +1,5 @@
 import pandas as pd
-from pyjin import pyjin
+from ..pyjin import pyjin
 
 # json 형태의 자료를 table에 insert하는 함수
 def bulk_insert_table(insert_json_list, table_name, to_conn):
@@ -46,8 +46,7 @@ def update_rows(acc,
             try:
                 pyjin.execute_query(con, query, **kwargs_set_conditions, **kwargs_where_conditions, is_return=False)
             except BaseException as e:
-                print(e)
-            
+                print(e)            
 
 
     with pyjin.connectDB(**acc) as con:                               
