@@ -2,6 +2,32 @@ import pandas as pd
 from x_x import account_info as ai
 from pyjin import pyjin
 
+# json 형태의 자료를 table에 insert하는 함수
+def bulk_insert_table(insert_json_list, table_name, to_conn):
+    pd.DataFrame(insert_json_list).to_sql(table_name, index=False, if_exists='replace', con=to_conn ,method='multi', chunksize=300)
+
+def bulk_update(acc,
+                db,
+                table,
+                list_dict_input,
+                list_dict_condition):
+
+    set_conditions = ",".join(["{key} = :set_{key}".format(key=key) for key in dict_input.keys()])
+    where_conditions = " and ".join(["{key} = :where_{key}".format(key=key) for key in dict_condition.keys()])    
+    
+    kwargs_set_conditions = {"set_"+key : value for key, value in dict_input.items()}
+    kwargs_where_conditions = {"where_"+key : value for key, value in dict_condition.items()} 
+    
+    query = """
+    update {db}.{table}
+    set {set_conditions}
+    where {where_conditions}
+    """.format(db=db,
+               table=table, 
+               set_conditions= set_conditions,
+               where_conditions = where_conditions)
+            
+
 def bulk_join_update(acc,
                      db,
                      table,
