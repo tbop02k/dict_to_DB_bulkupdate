@@ -6,12 +6,7 @@ from pyjin import pyjin
 def bulk_insert_table(insert_json_list, table_name, to_conn):
     pd.DataFrame(insert_json_list).to_sql(table_name, index=False, if_exists='replace', con=to_conn ,method='multi', chunksize=300)
 
-def bulk_update(acc,
-                db,
-                table,
-                list_dict_input,
-                list_dict_condition):
-
+def update_query_row(db, table, dict_input, dict_condition):
     set_conditions = ",".join(["{key} = :set_{key}".format(key=key) for key in dict_input.keys()])
     where_conditions = " and ".join(["{key} = :where_{key}".format(key=key) for key in dict_condition.keys()])    
     
@@ -26,9 +21,38 @@ def bulk_update(acc,
                table=table, 
                set_conditions= set_conditions,
                where_conditions = where_conditions)
+    
+    return query, kwargs_set_conditions, kwargs_where_conditions
+
+# 방법1. 반복문으로 행 하나하나에 접근하여 update
+def update_rows(acc,         
+                db,         
+                table,
+                list_dict_input,
+                list_dict_condition):        
+
+    with pyjin.connectDB(**acc) as con:                               
+        for dict_input, dict_condition in zip(list_dict_input, list_dict_condition):
+            query, kwargs_set_conditions, kwargs_where_conditions = update_query_row(db, table, dict_input, dict_condition)
+            
+            try:
+                pyjin.execute_query(con, query, **kwargs_set_conditions, **kwargs_where_conditions, is_return=False)
+            except BaseException as e:
+                print(e)
             
 
-def bulk_join_update(acc,
+
+    with pyjin.connectDB(**acc) as con:                               
+        for dict_input, dict_condition in zip(list_dict_input, list_dict_condition):
+            query, kwargs_set_conditions, kwargs_where_conditions = update_query_row(db, table, dict_input, dict_condition)
+            
+            try:
+                pyjin.execute_query(con, query, **kwargs_set_conditions, **kwargs_where_conditions, is_return=False)
+            except BaseException as e:
+                print(e)
+            
+# 방법2. dummy table에 데이터 삽입 후 join update
+def bulk_update_rows(acc,
                      db,
                      table,
                      list_dict_input,
@@ -55,7 +79,7 @@ def bulk_join_update(acc,
         try:
             # dummy table이 없으면 새로 create하고, 있으면 drop create insert. (if_exists='replace')
             df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
-            pyjin.print_logging("dummy table 업뎃 완료")
+            pyjin.print_logging("dummy table 업데이트 완료")
             ##  join update
             pyjin.execute_query(con,join_query)
 
