@@ -34,7 +34,7 @@ def update_rows(acc,
     df_col = df.columns
 
     if join_key not in df_col:
-        return 'no join key'
+        return 'join key not exists'
 
     list_dict_input = df[df.columns.difference([join_key])].to_dict(orient='records')
     list_dict_condition = df[[join_key]].to_dict(orient='records')    
@@ -60,7 +60,7 @@ def update_rows(acc,
                 print(e)
             
 # 방법2. dummy table에 데이터 삽입 후 join update
-# create_mode=0 : dummy table이 없을 시 stop, create_mode=1 : dummy table이 없을시 새로 생성
+# create_mode=0 : dummy table이 없을시 stop, create_mode=1 : dummy table이 없을시 새로 생성
 def bulk_update_rows(acc,
                      db,
                      table,
@@ -107,7 +107,7 @@ def bulk_update_rows(acc,
                 else:
                     # dummy table이 없으면 새로 create (if_exists='replace')
                     df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
-
+                    pyjin.print_logging("dummy table 생성 완료")
             pyjin.print_logging("dummy table 업데이트 완료")
             ##  join update
             pyjin.execute_query(con,join_query)
