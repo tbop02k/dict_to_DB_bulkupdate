@@ -29,7 +29,7 @@ def update_rows(acc,
                 table,
                 json_input,
                 join_key):  
-                  
+
     df = pd.DataFrame(json_input)
     df_col = df.columns
 
@@ -60,6 +60,7 @@ def update_rows(acc,
                 print(e)
             
 # 방법2. dummy table에 데이터 삽입 후 join update
+# create_mode=0 : dummy table이 없을 시 stop, create_mode=1 : dummy table이 없을시 새로 생성
 def bulk_update_rows(acc,
                      db,
                      table,
