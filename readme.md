@@ -4,11 +4,11 @@
 
 
 ### 방법 2. dummy_table 생성, 데이터 삽입 후 테이블 조인
-- join에 필요한 컬럼과 업데이트 대상 컬럼으로 구성된 딕셔너리를 input으로 받는다.
+1) join에 필요한 컬럼과 업데이트 대상 컬럼으로 구성된 딕셔너리를 input으로 받는다.
   - pandas dataframe에서 to_dict(orient='records') 함수 적용
 
 ```python
-# 예를 들어 어떤 pid의 'net_contents_prob'과 'reordered_PT_cnt' 컬럼 값을 업데이트 하려면
+# 예를 들어 어떤 pid의 'net_contents_prob'과 'reordered_PT_cnt' 컬럼 값을 업데이트 하려면 다음과 같은 json_input을 받는다. 
 
 json_input = [{'pid': 12, 'net_contents_prob': '0.0', 'reordered_PT_cnt': 29},
  {'pid': 13,'net_contents_prob': '0.0', 'reordered_PT_cnt': 23},
@@ -16,15 +16,14 @@ json_input = [{'pid': 12, 'net_contents_prob': '0.0', 'reordered_PT_cnt': 29},
  {'pid': 15,'net_contents_prob': '0.01', 'reordered_PT_cnt': 1},
  {'pid': 16,'net_contents_prob': '0.0', 'reordered_PT_cnt': 9},
  {'pid': 17,'net_contents_prob': '0.0', 'reordered_PT_cnt': 4}]
-
 ```
-- dummy_table에 값을 insert한다.
 
-    - dummy table이 없고 `create_mode`가 0이면 stop
-    - dymmy table이 없고 `create_mode`가 1이면 새로 생성
-    - dummy table이 있다면 delete, insert
+2) dummy_table에 값을 insert한다.
+- dummy table이 없고 `create_mode`가 0이면 stop
+- dymmy table이 없고 `create_mode`가 1이면 새로 생성
+- dummy table이 있다면 delete, insert
 
-- dummy_table 과 원테이블을 join
+3) dummy_table 과 원테이블을 join
 
 ## input 설명
 

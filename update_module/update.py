@@ -72,7 +72,7 @@ def bulk_update_rows(acc,
     df_col = df.columns
 
     if join_key not in df_col:
-        return 'no join key'
+        return 'join key not exists'
 
     list_dict_input = df[df.columns.difference([join_key])].to_dict(orient='records')
     list_dict_condition = df[[join_key]].to_dict(orient='records')
