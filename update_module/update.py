@@ -1,5 +1,4 @@
 import pandas as pd
-from x_x import account_info as ai
 from pyjin import pyjin
 
 # json 형태의 자료를 table에 insert하는 함수
