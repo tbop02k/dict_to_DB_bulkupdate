@@ -28,8 +28,17 @@ def update_query_row(db, table, dict_input, dict_condition):
 def update_rows(acc,         
                 db,         
                 table,
-                list_dict_input,
-                list_dict_condition):        
+                json_input,
+                join_key):  
+                  
+    df = pd.DataFrame(json_input)
+    df_col = df.columns
+
+    if join_key not in df_col:
+        return 'no join key'
+
+    list_dict_input = df[df.columns.difference([join_key])].to_dict(orient='records')
+    list_dict_condition = df[[join_key]].to_dict(orient='records')    
 
     with pyjin.connectDB(**acc) as con:                               
         for dict_input, dict_condition in zip(list_dict_input, list_dict_condition):
@@ -55,15 +64,22 @@ def update_rows(acc,
 def bulk_update_rows(acc,
                      db,
                      table,
-                     list_dict_input,
-                     list_dict_condition):
+                     json_input,
+                     join_key,
+                     create_mode=0):
+
+    df = pd.DataFrame(json_input)
+    df_col = df.columns
+
+    if join_key not in df_col:
+        return 'no join key'
+
+    list_dict_input = df[df.columns.difference([join_key])].to_dict(orient='records')
+    list_dict_condition = df[[join_key]].to_dict(orient='records')
 
     set_conditions = ",".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_input[0].items()])
     join_conditions = ",".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_condition[0].items()])
     
-	# dummy table
-    df = pd.concat([pd.DataFrame(list_dict_condition),pd.DataFrame(list_dict_input)],axis=1)
-    print(df)
     join_query = """
             update {db}.{table} A
             inner join {db}.{table_dummy} B 
@@ -77,8 +93,21 @@ def bulk_update_rows(acc,
 
     with pyjin.connectDB(**acc) as con:
         try:
-            # dummy table이 없으면 새로 create하고, 있으면 drop create insert. (if_exists='replace')
-            df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
+            # 테이블이 있다면 delete, insert
+            if pyjin.check_is_table(acc=acc,
+                                    schema_name=db,
+                                    table_name=table+'_dummy'):
+
+                pyjin.execute_query(con,'delete from {}.{}'.format(db,table+'_dummy'))
+                df.to_sql(table+'_dummy', schema=db, con=con, if_exists='append', index=False, chunksize=300, method='multi')
+            
+            else:
+                if create_mode == 0:
+                    return
+                else:
+                    # dummy table이 없으면 새로 create (if_exists='replace')
+                    df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
+
             pyjin.print_logging("dummy table 업데이트 완료")
             ##  join update
             pyjin.execute_query(con,join_query)
