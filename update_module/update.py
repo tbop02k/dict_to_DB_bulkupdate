@@ -93,7 +93,7 @@ def bulk_update_rows(acc,
 
     with pyjin.connectDB(**acc) as con:
         try:
-            # 테이블이 있다면 delete, insert
+            # dummy 테이블이 있다면 delete, insert
             if pyjin.check_is_table(acc=acc,
                                     schema_name=db,
                                     table_name=table+'_dummy'):
@@ -105,7 +105,7 @@ def bulk_update_rows(acc,
                 if create_mode == 0:
                     return
                 else:
-                    # dummy table이 없으면 새로 create (if_exists='replace')
+                    # dummy table이 없고, create_mode가 1이면 create (if_exists='replace')
                     df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
                     pyjin.print_logging("dummy table 생성 완료")
             pyjin.print_logging("dummy table 업데이트 완료")
