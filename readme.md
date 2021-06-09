@@ -21,11 +21,11 @@ json_input = [{'pid': 12, 'net_contents_prob': '0.0', 'reordered_PT_cnt': 29},
 
 2) dummy_table에 값을 insert한다.
 
-  2-1) dummy table이 없고 `create_mode`가 0이면 stop
+- 2-1) dummy table이 없고 `create_mode`가 0이면 stop
 
-  2-2) dummy table이 없고 `create_mode`가 1이면 새로 생성
+- 2-2) dummy table이 없고 `create_mode`가 1이면 새로 생성
 
-  2-3) dummy table이 있다면 delete, insert
+- 2-3) dummy table이 있다면 delete, insert
 
 3) dummy_table 과 원테이블을 join
 
