@@ -48,16 +48,6 @@ def update_rows(acc,
             except BaseException as e:
                 print(e)
             
-
-
-    with pyjin.connectDB(**acc) as con:                               
-        for dict_input, dict_condition in zip(list_dict_input, list_dict_condition):
-            query, kwargs_set_conditions, kwargs_where_conditions = update_query_row(db, table, dict_input, dict_condition)
-            
-            try:
-                pyjin.execute_query(con, query, **kwargs_set_conditions, **kwargs_where_conditions, is_return=False)
-            except BaseException as e:
-                print(e)
             
 # 방법2. dummy table에 데이터 삽입 후 join update
 # create_mode=0 : dummy table이 없을시 stop, create_mode=1 : dummy table이 없을시 새로 생성
