@@ -33,11 +33,12 @@ def update_rows(acc,
     df = pd.DataFrame(json_input)
     df_col = df.columns
 
-    if join_key not in df_col:
-        return 'join key not exists'
+    for key in join_key:
+        if key not in df_col:
+            return 'join key not exists'
 
-    list_dict_input = df[df.columns.difference([join_key])].to_dict(orient='records')
-    list_dict_condition = df[[join_key]].to_dict(orient='records')    
+    list_dict_input = df[df.columns.difference(join_key)].to_dict(orient='records')
+    list_dict_condition = df[join_key].to_dict(orient='records')    
 
     with pyjin.connectDB(**acc) as con:                               
         for dict_input, dict_condition in zip(list_dict_input, list_dict_condition):
@@ -60,14 +61,15 @@ def bulk_update_rows(acc,
     df = pd.DataFrame(json_input)
     df_col = df.columns
 
-    if join_key not in df_col:
-        return 'join key not exists'
+    for key in join_key:
+        if key not in df_col:
+            return 'join key not exists'
 
-    list_dict_input = df[df.columns.difference([join_key])].to_dict(orient='records')
-    list_dict_condition = df[[join_key]].to_dict(orient='records')
+    list_dict_input = df[df.columns.difference(join_key)].to_dict(orient='records')
+    list_dict_condition = df[join_key].to_dict(orient='records')
 
     set_conditions = ",".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_input[0].items()])
-    join_conditions = ",".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_condition[0].items()])
+    join_conditions = " AND ".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_condition[0].items()])
     
     join_query = """
             update {db}.{table} A
