@@ -27,10 +27,10 @@ def update_query_row(db, table, dict_input, dict_condition):
 def update_rows(acc,         
                 db,         
                 table,
-                json_input,
+                dict_input,
                 join_key):  
 
-    df = pd.DataFrame(json_input)
+    df = pd.DataFrame(dict_input)
     df_col = df.columns
 
     for key in join_key:
@@ -54,11 +54,11 @@ def update_rows(acc,
 def bulk_update_rows(acc,
                      db,
                      table,
-                     json_input,
+                     dict_input,
                      join_key,
                      create_mode=0):
 
-    df = pd.DataFrame(json_input)
+    df = pd.DataFrame(dict_input)
     df_col = df.columns
 
     for key in join_key:
