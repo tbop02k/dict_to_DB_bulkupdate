@@ -97,10 +97,10 @@ def bulk_update_rows(acc,
                 else:
                     # dummy table이 없고, create_mode가 1이면 create (if_exists='replace')
                     df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
-                    pyjin.print_logging("dummy table 생성 완료")
+                    pyjin.print_logging("dummy table created")
+            pyjin.print_logging("dummy table updated")
             ##  join update
             pyjin.execute_query(con,join_query)
-            pyjin.print_logging("dummy table 업데이트 완료")
         except Exception as e:
             pyjin.print_logging("{} update failed, {}".format(table, e))
 
