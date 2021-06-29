@@ -69,8 +69,7 @@ def bulk_update_rows(acc,
     list_dict_condition = df[join_key].to_dict(orient='records')
 
     set_conditions = ",".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_input[0].items()])
-    join_conditions = " AND ".join(["A.{key} = B.{key}".format(key=key) for key, value in list_dict_condition[0].items()])
-    
+    join_conditions = " AND ".join(["(A.{key} = B.{key} OR A.{key} IS NULL OR B.{key} IS NULL)".format(key=key) for key, value in list_dict_condition[0].items()])
     join_query = """
             update {db}.{table} A
             inner join {db}.{table_dummy} B 
@@ -98,11 +97,10 @@ def bulk_update_rows(acc,
                 else:
                     # dummy table이 없고, create_mode가 1이면 create (if_exists='replace')
                     df.to_sql(table+'_dummy', schema=db, con=con, if_exists='replace', index=False, chunksize=300, method='multi')
-                    pyjin.print_logging("dummy table 생성 완료")
-            pyjin.print_logging("dummy table 업데이트 완료")
+                    pyjin.print_logging("dummy table created")
+            pyjin.print_logging("dummy table updated")
             ##  join update
             pyjin.execute_query(con,join_query)
-
         except Exception as e:
             pyjin.print_logging("{} update failed, {}".format(table, e))
 
