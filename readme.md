@@ -47,14 +47,14 @@ json_input = [{'pid': 12, 'net_contents_prob': '0.0', 'reordered_PT_cnt': 29},
 update_rows(acc=ai.vmdb_sql_info(),
                  db='yunsik_test',
                  table='test',
-                 json_input=json_input,
+                 dict_input=dict_input,
                  join_key='pid')
                  
 # join_update
 bulk_update_rows(acc=ai.vmdb_sql_info(),
                  db='yunsik_test',
                  table='test',
-                 json_input=json_input,
+                 dict_input=dict_input,
                  join_key='pid',
                  create_mode=1)
 
